@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\Workshop;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -101,7 +102,35 @@ class EventsController extends BaseController
      */
 
     public function getEventsWithWorkshops() {
-        throw new \Exception('implement in coding task 1');
+        //throw new \Exception('implement in coding task 1');
+
+         $datas = Event::all();
+   
+
+        $output = [];
+       
+        foreach($datas as $data)
+        {   
+            $singleoutput= array("id" => $data["id"], "name" => $data["name"], "created_at" => $data["created_at"], "updated_at" => $data["updated_at"], "workshops" => 0);
+            $workshops = Workshop::where("event_id",$data["id"])->get();
+  
+         
+            $wsarray["workshops"] = array();
+            $i = 0;
+             foreach($workshops as $workshop)
+            {
+                $secondoutput =array("id" => $workshop["id"], "start" => $workshop["start"],  "end" => $workshop["end"],  "event_id" => $workshop["event_id"],"name" => $workshop["name"], "created_at" => $workshop["created_at"], "updated_at" => $workshop["updated_at"]);
+       
+              $singleoutput["workshops"] = $secondoutput;
+            }
+          
+            array_push($output, $singleoutput);
+          
+        }
+       
+
+               return $output;
+
     }
 
 
