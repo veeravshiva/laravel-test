@@ -111,7 +111,7 @@ class EventsController extends BaseController
        
         foreach($datas as $data)
         {   
-            $singleoutput= array("id" => $data["id"], "name" => $data["name"], "created_at" => $data["created_at"], "updated_at" => $data["updated_at"], "workshops" => 0);
+            $singleoutput= array("id" => $data["id"], "name" => $data["name"], "created_at" => $data["created_at"], "updated_at" => $data["updated_at"], "workshops" => []);
             $workshops = Workshop::where("event_id",$data["id"])->get();
   
          
@@ -120,8 +120,8 @@ class EventsController extends BaseController
              foreach($workshops as $workshop)
             {
                 $secondoutput =array("id" => $workshop["id"], "start" => $workshop["start"],  "end" => $workshop["end"],  "event_id" => $workshop["event_id"],"name" => $workshop["name"], "created_at" => $workshop["created_at"], "updated_at" => $workshop["updated_at"]);
-       
-              $singleoutput["workshops"] = $secondoutput;
+                array_push($singleoutput["workshops"], $secondoutput);
+              //$singleoutput["workshops"] = $secondoutput;
             }
           
             array_push($output, $singleoutput);
@@ -209,6 +209,37 @@ class EventsController extends BaseController
      */
 
     public function getFutureEventsWithWorkshops() {
-        throw new \Exception('implement in coding task 2');
+        //throw new \Exception('implement in coding task 2');
+  
+       
+        $datas = Event::all();
+   
+
+        $output = [];
+       
+        foreach($datas as $data)
+        {   
+        $singleoutput= array("id" => $data["id"], "name" => $data["name"], "created_at" => $data["created_at"], "updated_at" => $data["updated_at"], "workshops" => []);
+        $workshops = Workshop::where("event_id",$data["id"])->where("start",'>', date("Y-m-d"))->get();
+        if($workshops->count()){
+
+       
+     
+        $wsarray["workshops"] = array();
+        $i = 0;
+         foreach($workshops as $workshop)
+        {
+            $secondoutput =array("id" => $workshop["id"], "start" => $workshop["start"],  "end" => $workshop["end"],  "event_id" => $workshop["event_id"],"name" => $workshop["name"], "created_at" => $workshop["created_at"], "updated_at" => $workshop["updated_at"]);
+            array_push($singleoutput["workshops"], $secondoutput);
+          //$singleoutput["workshops"] = $secondoutput;
+        }
+      
+        array_push($output, $singleoutput);
+         }
+         else{$singleoutput = [];}
+    
+    }
+
+           return $output;
     }
 }
