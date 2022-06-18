@@ -25,7 +25,7 @@ class MenuController extends BaseController
     Sample response on GET /menu:
     ```json
     [
-        {
+        { 
             "id": 1,
             "name": "All events",
             "url": "/events",
@@ -95,6 +95,54 @@ class MenuController extends BaseController
      */
 
     public function getMenuItems() {
-        throw new \Exception('implement in coding task 3');
+        //throw new \Exception('implement in coding task 3');
+        $allmenus = MenuItem::all();
+     
+                function getChild($parent_id, $allmenus)
+                {
+                    $submenu = [];
+                    foreach ($allmenus as $allmenu)
+                    {
+                       
+                        if($allmenu["parent_id"] == $parent_id)
+                        {
+                            $menu["id"] = $allmenu["id"];
+                            $menu["name"] = $allmenu["name"];
+                            $menu["url"] = $allmenu["url"];
+                            $menu["parent_id"] = $allmenu["parent_id"];
+                            $menu["parent_id"] = $allmenu["parent_id"];
+                            $menu["created_at"] = $allmenu["created_at"];
+                            $menu["updated_at"] = $allmenu["updated_at"];
+                            $menu["children"] = getChild($allmenu["id"], $allmenus);
+                            array_push($submenu, $menu);
+                            
+                        }
+                
+                    }
+                    return $submenu;
+                 
+                }
+              
+                foreach ($allmenus as $allmenu)
+                {
+                    if($allmenu["parent_id"] == null)
+                    {
+                        $menu["id"] = $allmenu["id"];
+                        $menu["name"] = $allmenu["name"];
+                        $menu["url"] = $allmenu["url"];
+                        $menu["parent_id"] = $allmenu["parent_id"];
+                        $menu["parent_id"] = $allmenu["parent_id"];
+                        $menu["created_at"] = $allmenu["created_at"];
+                        $menu["updated_at"] = $allmenu["updated_at"];
+                        $menu["children"] = getChild($allmenu["id"], $allmenus);
+                    }
+            
+                }
+            
+            $totalmenu = [];
+            array_push($totalmenu, $menu);
+            $totalmenu = json_encode($totalmenu);
+           return $totalmenu;
+           // return $menu;
     }
 }
